@@ -1,26 +1,64 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Table from "./components/Table";
+import Cell from "./components/Cell";
+import getDailyInfo from "./http/getDailyInfo";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+import * as S from "./styles";
+
+const App = () => {
+  const [data, setDate] = useState([]);
+
+  useEffect(() => {
+    getDailyInfo().then((data) => {
+      setDate(data);
+    });
+  }, []);
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Country",
+        accessor: "country",
+        percentWidth: 25,
+      },
+      {
+        Header: "Province / State",
+        accessor: "provinceState",
+        percentWidth: 25,
+      },
+      {
+        Header: "Active",
+        accessor: "active",
+        percentWidth: 12.5,
+        Cell: Cell.Active,
+      },
+      {
+        Header: "Recovered",
+        accessor: "recovered",
+        percentWidth: 12.5,
+        Cell: Cell.Recovered,
+      },
+      {
+        Header: "Deaths",
+        accessor: "deaths",
+        percentWidth: 12.5,
+        Cell: Cell.Death,
+      },
+      {
+        Header: "Confirmed",
+        accessor: "confirmed",
+        percentWidth: 12.5,
+        Cell: Cell.Confirmed,
+      },
+    ],
+    []
   );
-}
+
+  return (
+    <S.Container>
+      <Table data={data} columns={columns} />
+    </S.Container>
+  );
+};
 
 export default App;
